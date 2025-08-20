@@ -126,8 +126,8 @@ npm run dev
 
 3. **Access the application**:
    - Frontend: http://localhost:5173
-   - Backend API: http://localhost:5000
-   - Health check: http://localhost:5000/health
+   - Backend API: http://localhost:5001
+   - Health check: http://localhost:5001/health
 
 ### Production Mode
 
