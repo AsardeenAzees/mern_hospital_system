@@ -87,7 +87,7 @@ npm install
 Create a `.env` file in the `server` directory:
 
 ```env
-PORT=5000
+PORT=5001
 MONGO_URI=mongodb://127.0.0.1:27017/mern_hospital
 JWT_SECRET=your_very_long_random_secret_key_here
 JWT_EXPIRES=7d
