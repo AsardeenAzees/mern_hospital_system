@@ -38,7 +38,7 @@ export default function PatientView() {
     const addEntry = async (e) => {
         e.preventDefault()
         setErr('')
-        
+
         if (!entry.text.trim()) {
             setErr('Please enter record details')
             return
@@ -48,7 +48,7 @@ export default function PatientView() {
             const formData = new FormData()
             formData.append('type', entry.type)
             formData.append('text', entry.text)
-            
+
             // Add attachments if any
             attachments.forEach((file, index) => {
                 formData.append(`attachments`, file)
@@ -188,7 +188,7 @@ export default function PatientView() {
                             {record.entries?.length || 0} entries
                         </div>
                     </div>
-                    
+
                     {record.entries && record.entries.length > 0 ? (
                         <div className="space-y-6">
                             {record.entries.slice().reverse().map((e, idx) => (
@@ -215,7 +215,7 @@ export default function PatientView() {
                                         )}
                                     </div>
                                     <div className="text-gray-900 whitespace-pre-wrap bg-gray-50 rounded-xl p-4">{e.text}</div>
-                                    
+
                                     {/* Attachments */}
                                     {e.attachments && e.attachments.length > 0 && (
                                         <div className="mt-4 pt-4 border-t border-gray-200">
@@ -261,9 +261,9 @@ export default function PatientView() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label className="block text-sm font-semibold text-gray-700 mb-2">Entry Type</label>
-                                    <select 
+                                    <select
                                         className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors duration-200"
-                                        value={entry.type} 
+                                        value={entry.type}
                                         onChange={e => setEntry(s => ({ ...s, type: e.target.value }))}
                                     >
                                         <option value="DIAGNOSIS">🏥 Diagnosis</option>
@@ -274,8 +274,8 @@ export default function PatientView() {
                                 </div>
                                 <div>
                                     <label className="block text-sm font-semibold text-gray-700 mb-2">Attachments</label>
-                                    <input 
-                                        type="file" 
+                                    <input
+                                        type="file"
                                         multiple
                                         onChange={handleFileChange}
                                         className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors duration-200"
@@ -283,7 +283,7 @@ export default function PatientView() {
                                     />
                                 </div>
                             </div>
-                            
+
                             {attachments.length > 0 && (
                                 <div className="bg-gray-50 rounded-xl p-4">
                                     <label className="block text-sm font-semibold text-gray-700 mb-3">Selected Files:</label>
@@ -303,20 +303,20 @@ export default function PatientView() {
                                     </div>
                                 </div>
                             )}
-                            
+
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-2">Details</label>
-                                <textarea 
+                                <textarea
                                     className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors duration-200"
-                                    rows={6} 
+                                    rows={6}
                                     placeholder="Enter medical record details..."
-                                    value={entry.text} 
+                                    value={entry.text}
                                     onChange={e => setEntry(s => ({ ...s, text: e.target.value }))}
                                     required
                                 />
                             </div>
-                            
-                            <button 
+
+                            <button
                                 type="submit"
                                 className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl"
                             >
@@ -335,7 +335,7 @@ export default function PatientView() {
                         </div>
                     </div>
                 )}
-                
+
                 {/* Admin Actions */}
                 {me?.role === 'ADMIN' && (
                     <div className="bg-white rounded-2xl shadow-xl p-8">
@@ -350,13 +350,7 @@ export default function PatientView() {
                             >
                                 🔄 Rotate QR Token
                             </button>
-                            <a
-                                href={`/api/patients/${id}/qr.png`}
-                                download
-                                className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl text-center"
-                            >
-                                📥 Download QR Code
-                            </a>
+
                         </div>
                     </div>
                 )}

@@ -73,7 +73,6 @@ export default function Users() {
                     <select name="role" value={form.role} onChange={change} className="border p-2 rounded">
                         <option>DOCTOR</option>
                         <option>NURSE</option>
-                        <option>PATIENT</option>
                         <option>ADMIN</option>
                     </select>
                     <button className="bg-black text-white rounded p-2">Create</button>
@@ -89,8 +88,6 @@ export default function Users() {
                                 <th className="p-2">Name</th>
                                 <th className="p-2">Email</th>
                                 <th className="p-2">Role</th>
-                                <th className="p-2">Status</th>
-                                <th className="p-2">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -98,29 +95,7 @@ export default function Users() {
                                 <tr key={u._id} className="border-b">
                                     <td className="p-2">{u.name}</td>
                                     <td className="p-2">{u.email}</td>
-                                    <td className="p-2">
-                                        <select defaultValue={u.role} onChange={e => updateUser(u._id, { role: e.target.value })} className="border p-1 rounded">
-                                            <option>PATIENT</option><option>DOCTOR</option><option>NURSE</option><option>ADMIN</option>
-                                        </select>
-                                    </td>
-                                    <td className="p-2">
-                                        <select defaultValue={u.status} onChange={e => updateUser(u._id, { status: e.target.value })} className="border p-1 rounded">
-                                            <option>ACTIVE</option><option>SUSPENDED</option>
-                                        </select>
-                                    </td>
-                                    <td className="p-2 flex gap-2">
-                                        {u.role === 'PATIENT' && (
-                                            <button
-                                                onClick={() => setLinkingUser(u._id)}
-                                                className="underline text-blue-700"
-                                            >Link Patient</button>
-                                        )}
-                                        <button
-                                            onClick={() => updateUser(u._id, { password: 'Reset@123' })}
-                                            className="underline"
-                                            title="Set temp password"
-                                        >Reset PW</button>
-                                    </td>
+                                    <td className="p-2">{u.role}</td>
                                 </tr>
                             ))}
                             {!users.length && (

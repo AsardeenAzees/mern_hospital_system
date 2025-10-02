@@ -35,7 +35,7 @@ router.post('/auth/register', async (req, res) => {
         const user = await User.create({ name, email, role, passwordHash });
         console.log('User created successfully:', user.email);
 
-        const token = jwt.sign({ id: user._id, role: user.role, name: user.name }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES || '7d' });
+        const token = jwt.sign({ id: user._id, role: user.role, name: user.name, email: user.email }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES || '7d' });
         setAuthCookie(res, token);
 
         res.status(201).json({ user: { id: user._id, name: user.name, email: user.email, role: user.role } });
@@ -68,7 +68,7 @@ router.post('/auth/login', async (req, res) => {
         }
 
         console.log('Login successful for:', email);
-        const token = jwt.sign({ id: user._id, role: user.role, name: user.name }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES || '7d' });
+        const token = jwt.sign({ id: user._id, role: user.role, name: user.name, email: user.email }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES || '7d' });
         setAuthCookie(res, token);
         res.json({ user: { id: user._id, name: user.name, email: user.email, role: user.role } });
     } catch (e) {
@@ -87,7 +87,7 @@ router.post('/auth/login/patient', async (req, res) => {
         if (!p) return res.status(401).json({ message: 'Invalid credentials' });
 
         // Create a lightweight token for patient session without separate User
-        const token = jwt.sign({ id: p.userRef?.toString() || p._id.toString(), role: 'PATIENT', name: `${p.firstName} ${p.lastName}` }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES || '7d' });
+        const token = jwt.sign({ id: p.userRef?.toString() || p._id.toString(), role: 'PATIENT', name: `${p.firstName} ${p.lastName}`, email: p.email || null }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES || '7d' });
         setAuthCookie(res, token);
         res.json({ user: { id: p._id, name: `${p.firstName} ${p.lastName}`, role: 'PATIENT' } });
     } catch (e) {
@@ -102,17 +102,42 @@ router.post('/auth/logout', (req, res) => {
     res.json({ message: 'Logged out' });
 });
 
-router.get('/auth/me', (req, res) => {
+router.get('/auth/me', async (req, res) => {
     const token = req.cookies?.token;
     if (!token) {
         console.log('No token found in cookies');
         return res.status(200).json({ user: null });
     }
-    
+
     try {
         const payload = jwt.verify(token, process.env.JWT_SECRET);
         console.log('Token verified for user:', payload.name);
-        res.json({ user: payload });
+        let userData = { ...payload };
+
+        if (!userData.email) {
+            if (userData.role === 'PATIENT') {
+                let patient = await Patient.findOne({ userRef: userData.id }).lean();
+                if (!patient) {
+                    patient = await Patient.findById(userData.id).lean();
+                }
+                if (patient && patient.email) {
+                    userData.email = patient.email;
+                }
+            } else {
+                const user = await User.findById(userData.id).lean();
+                if (user) {
+                    userData = {
+                        id: user._id.toString(),
+                        name: user.name,
+                        email: user.email,
+                        role: user.role,
+                        status: user.status
+                    };
+                }
+            }
+        }
+
+        res.json({ user: userData });
     } catch (e) {
         console.log('Invalid token:', e.message);
         res.json({ user: null });
@@ -120,3 +145,4 @@ router.get('/auth/me', (req, res) => {
 });
 
 export default router;
+

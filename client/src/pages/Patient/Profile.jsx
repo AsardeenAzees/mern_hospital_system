@@ -21,9 +21,9 @@ export default function Profile() {
         try {
             const userRes = await http.get('/auth/me')
             const user = userRes.data.user
-            
+
             let additionalData = null
-            
+
             // Fetch role-specific data
             if (user.role === 'PATIENT') {
                 try {
@@ -33,7 +33,7 @@ export default function Profile() {
                     console.warn('No patient data found:', error)
                 }
             }
-            
+
             setProfile({ user, additionalData })
             setForm({
                 name: user.name,
@@ -116,7 +116,7 @@ export default function Profile() {
                     <div className="text-red-500 text-6xl mb-4">⚠️</div>
                     <h2 className="text-xl font-semibold text-gray-800 mb-2">Failed to load profile</h2>
                     <p className="text-gray-600 mb-6">We couldn't load your profile information</p>
-                    <button 
+                    <button
                         onClick={fetchProfile}
                         className="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition-colors duration-200 font-medium"
                     >
@@ -277,12 +277,11 @@ export default function Profile() {
                                 </div>
                                 <div className="bg-gray-50 rounded-xl p-4">
                                     <label className="block text-sm font-semibold text-gray-700 mb-2">Account Status</label>
-                                    <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                                        user.status === 'ACTIVE' 
-                                            ? 'bg-green-100 text-green-800' 
-                                            : 'bg-red-100 text-red-800'
-                                    }`}>
-                                        {user.status === 'ACTIVE' ? '✅ Active' : '❌ Inactive'}
+                                    <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${user.status === 'ACTIVE'
+                                        ? 'bg-green-100 text-green-800'
+                                        : 'bg-green-100 text-green-800'
+                                        }`}>
+                                        Active
                                     </div>
                                 </div>
                             </div>
@@ -306,7 +305,7 @@ export default function Profile() {
                                             <div className="text-gray-900">{additionalData.gender}</div>
                                         </div>
                                     </div>
-                                    
+
                                     {additionalData.allergies && additionalData.allergies.length > 0 && (
                                         <div className="mt-6 bg-white rounded-xl p-4">
                                             <label className="block text-sm font-semibold text-gray-700 mb-2">⚠️ Allergies</label>
