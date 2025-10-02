@@ -153,7 +153,7 @@ export default function Login() {
                                     : 'text-gray-600 hover:text-gray-900'
                                 }`}
                         >
-                            🔐 Sign I
+                            🔐 Sign In
                         </button>
                         <button
                             onClick={() => { setIsLogin(false); setIsPatientLogin(false); resetForm() }}
