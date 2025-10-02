@@ -25,7 +25,7 @@ export default function Login() {
         e.preventDefault()
         setErr('')
         setLoading(true)
-        
+
         if (!form.email || !form.password) {
             setErr('Please fill in all required fields')
             setLoading(false)
@@ -34,12 +34,12 @@ export default function Login() {
 
         try {
             console.log('Attempting login with:', { email: form.email })
-            const { data } = await http.post('/auth/login', { 
-                email: form.email, 
-                password: form.password 
+            const { data } = await http.post('/auth/login', {
+                email: form.email,
+                password: form.password
             })
             console.log('Login successful:', data)
-            
+
             const role = data?.user?.role
             if (role === 'ADMIN') window.location.href = '/app/admin/users'
             else if (role === 'DOCTOR' || role === 'NURSE') window.location.href = '/app/scan'
@@ -47,7 +47,7 @@ export default function Login() {
         } catch (e) {
             console.error('Login error:', e)
             console.error('Error response:', e.response)
-            
+
             if (e.code === 'ERR_NETWORK') {
                 setErr('Network error: Please check if the server is running')
             } else if (e.response?.status === 401) {
@@ -93,7 +93,7 @@ export default function Login() {
                 password: form.password,
                 role: form.role
             })
-            
+
             // Auto-login after successful registration
             setErr('Registration successful! Logging you in...')
             setTimeout(() => {
@@ -148,21 +148,19 @@ export default function Login() {
                     <div className="flex bg-gray-100 rounded-xl p-1 mb-4">
                         <button
                             onClick={() => { setIsLogin(true); setIsPatientLogin(false); resetForm() }}
-                            className={`flex-1 py-3 px-4 rounded-lg font-semibold transition-all duration-200 ${
-                                isLogin 
-                                    ? 'bg-white text-gray-900 shadow-sm transform scale-105' 
+                            className={`flex-1 py-3 px-4 rounded-lg font-semibold transition-all duration-200 ${isLogin
+                                    ? 'bg-white text-gray-900 shadow-sm transform scale-105'
                                     : 'text-gray-600 hover:text-gray-900'
-                            }`}
+                                }`}
                         >
-                            🔐 Sign In
+                            🔐 Sign I
                         </button>
                         <button
                             onClick={() => { setIsLogin(false); setIsPatientLogin(false); resetForm() }}
-                            className={`flex-1 py-3 px-4 rounded-lg font-semibold transition-all duration-200 ${
-                                !isLogin 
-                                    ? 'bg-white text-gray-900 shadow-sm transform scale-105' 
+                            className={`flex-1 py-3 px-4 rounded-lg font-semibold transition-all duration-200 ${!isLogin
+                                    ? 'bg-white text-gray-900 shadow-sm transform scale-105'
                                     : 'text-gray-600 hover:text-gray-900'
-                            }`}
+                                }`}
                         >
                             ✨ Sign Up
                         </button>
@@ -172,21 +170,19 @@ export default function Login() {
                         <div className="flex bg-gray-100 rounded-xl p-1 mb-8">
                             <button
                                 onClick={() => { setIsPatientLogin(false); resetForm() }}
-                                className={`flex-1 py-2 px-4 rounded-lg text-sm font-semibold transition-all duration-200 ${
-                                    !isPatientLogin 
-                                        ? 'bg-white text-gray-900 shadow-sm' 
+                                className={`flex-1 py-2 px-4 rounded-lg text-sm font-semibold transition-all duration-200 ${!isPatientLogin
+                                        ? 'bg-white text-gray-900 shadow-sm'
                                         : 'text-gray-600 hover:text-gray-900'
-                                }`}
+                                    }`}
                             >
                                 Staff Login
                             </button>
                             <button
                                 onClick={() => { setIsPatientLogin(true); resetForm() }}
-                                className={`flex-1 py-2 px-4 rounded-lg text-sm font-semibold transition-all duration-200 ${
-                                    isPatientLogin 
-                                        ? 'bg-white text-gray-900 shadow-sm' 
+                                className={`flex-1 py-2 px-4 rounded-lg text-sm font-semibold transition-all duration-200 ${isPatientLogin
+                                        ? 'bg-white text-gray-900 shadow-sm'
                                         : 'text-gray-600 hover:text-gray-900'
-                                }`}
+                                    }`}
                             >
                                 Patient Login (PatientID + NIC)
                             </button>
@@ -194,11 +190,10 @@ export default function Login() {
                     )}
 
                     {err && (
-                        <div className={`mb-6 p-4 rounded-xl text-sm flex items-center ${
-                            err.includes('successful') 
-                                ? 'bg-green-50 text-green-800 border border-green-200' 
+                        <div className={`mb-6 p-4 rounded-xl text-sm flex items-center ${err.includes('successful')
+                                ? 'bg-green-50 text-green-800 border border-green-200'
                                 : 'bg-red-50 text-red-800 border border-red-200'
-                        }`}>
+                            }`}>
                             <span className="mr-2">
                                 {err.includes('successful') ? '✅' : '⚠️'}
                             </span>
@@ -211,7 +206,7 @@ export default function Login() {
                         <form onSubmit={handleLogin} className="space-y-6">
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-2">📧 Email Address</label>
-                                <input 
+                                <input
                                     className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors duration-200"
                                     type="email"
                                     placeholder="Enter your email"
@@ -223,7 +218,7 @@ export default function Login() {
                             </div>
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-2">🔒 Password</label>
-                                <input 
+                                <input
                                     className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors duration-200"
                                     type="password"
                                     placeholder="Enter your password"
@@ -233,7 +228,7 @@ export default function Login() {
                                     required
                                 />
                             </div>
-                            <button 
+                            <button
                                 type="submit"
                                 disabled={loading}
                                 className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl py-3 px-4 font-semibold hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl"
@@ -260,7 +255,7 @@ export default function Login() {
                         }} className="space-y-6">
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-2">🆔 Patient ID</label>
-                                <input 
+                                <input
                                     className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors duration-200"
                                     type="text"
                                     placeholder="e.g., PT000001"
@@ -272,7 +267,7 @@ export default function Login() {
                             </div>
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-2">🪪 NIC</label>
-                                <input 
+                                <input
                                     className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors duration-200"
                                     type="text"
                                     placeholder="Enter your NIC"
@@ -282,7 +277,7 @@ export default function Login() {
                                     required
                                 />
                             </div>
-                            <button 
+                            <button
                                 type="submit"
                                 disabled={loading}
                                 className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl py-3 px-4 font-semibold hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl"
@@ -295,7 +290,7 @@ export default function Login() {
                         <form onSubmit={handleRegister} className="space-y-6">
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-2">👤 Full Name</label>
-                                <input 
+                                <input
                                     className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors duration-200"
                                     type="text"
                                     placeholder="Enter your full name"
@@ -307,7 +302,7 @@ export default function Login() {
                             </div>
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-2">📧 Email Address</label>
-                                <input 
+                                <input
                                     className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors duration-200"
                                     type="email"
                                     placeholder="Enter your email"
@@ -320,7 +315,7 @@ export default function Login() {
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-2">🎭 Role</label>
                                 <div className="relative">
-                                    <select 
+                                    <select
                                         className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors duration-200 appearance-none bg-white"
                                         value={form.role}
                                         onChange={handleChange}
@@ -342,7 +337,7 @@ export default function Login() {
                             </div>
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-2">🔒 Password</label>
-                                <input 
+                                <input
                                     className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors duration-200"
                                     type="password"
                                     placeholder="Enter your password"
@@ -354,7 +349,7 @@ export default function Login() {
                             </div>
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-2">🔐 Confirm Password</label>
-                                <input 
+                                <input
                                     className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors duration-200"
                                     type="password"
                                     placeholder="Confirm your password"
@@ -364,7 +359,7 @@ export default function Login() {
                                     required
                                 />
                             </div>
-                            <button 
+                            <button
                                 type="submit"
                                 disabled={loading}
                                 className="w-full bg-gradient-to-r from-green-600 to-blue-600 text-white rounded-xl py-3 px-4 font-semibold hover:from-green-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl"
