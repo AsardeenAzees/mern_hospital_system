@@ -9,7 +9,7 @@ export default function Login() {
         email: '',
         password: '',
         confirmPassword: '',
-        role: 'PATIENT',
+        role: 'DOCTOR',
         patientId: '',
         nic: ''
     })
@@ -115,7 +115,7 @@ export default function Login() {
             email: '',
             password: '',
             confirmPassword: '',
-            role: 'PATIENT'
+            role: 'DOCTOR'
         })
         setErr('')
     }
@@ -327,7 +327,6 @@ export default function Login() {
                                         name="role"
                                         required
                                     >
-                                        <option value="PATIENT">👤 Patient</option>
                                         <option value="DOCTOR">👨‍⚕️ Doctor</option>
                                         <option value="NURSE">👩‍⚕️ Nurse</option>
                                         <option value="ADMIN">👨‍💼 Admin</option>
