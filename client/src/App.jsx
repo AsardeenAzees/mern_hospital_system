@@ -131,7 +131,7 @@ export default function App() {
                   <span className="text-lg">👥</span>
                   <span>Manage Users</span>
                 </NavLink>
-                <NavLink to="/app/admin/patients" className={linkClass}>
+                <NavLink to="/app/admin/patients" end className={linkClass}>
                   <span className="text-lg">🏥</span>
                   <span>Patients</span>
                 </NavLink>
@@ -228,7 +228,7 @@ export default function App() {
                     <span className="text-lg">👥</span>
                     <span>Manage Users</span>
                   </NavLink>
-                  <NavLink to="/app/admin/patients" className={linkClass} onClick={() => setSidebarOpen(false)}>
+                  <NavLink to="/app/admin/patients" end className={linkClass} onClick={() => setSidebarOpen(false)}>
                     <span className="text-lg">🏥</span>
                     <span>Patients</span>
                   </NavLink>
