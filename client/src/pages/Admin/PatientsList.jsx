@@ -9,6 +9,7 @@ export default function PatientsList() {
     const [data, setData] = useState({ total: 0, patients: [] })
     const [loading, setLoading] = useState(false)
     const [err, setErr] = useState('')
+    const [deletingId, setDeletingId] = useState(null)
 
     const load = async () => {
         setLoading(true); setErr('')
@@ -54,6 +55,24 @@ export default function PatientsList() {
             load()
         } catch (e) {
             alert(e.response?.data?.message || 'Rotate failed')
+        }
+    }
+
+    const deletePatient = async (p) => {
+        if (!confirm(`Delete patient account for ${p.firstName} ${p.lastName}? This will remove their records.`)) return
+        try {
+            setDeletingId(p._id)
+            await http.delete(`/patients/${p._id}`)
+            alert('Patient account deleted')
+            if ((data.patients?.length || 0) === 1 && page > 1) {
+                setPage(prev => Math.max(prev - 1, 1))
+            } else {
+                await load()
+            }
+        } catch (e) {
+            alert(e.response?.data?.message || 'Failed to delete patient')
+        } finally {
+            setDeletingId(null)
         }
     }
 
@@ -105,6 +124,14 @@ export default function PatientsList() {
                                         <Link className="underline" to={`/app/patients/${p._id}`}>View</Link>
                                         <button className="underline" onClick={() => downloadQr(p)}>Download QR</button>
                                         <button className="underline" onClick={() => rotateQr(p)}>Rotate QR</button>
+                                        <button
+                                            type="button"
+                                            className={`underline text-red-600 ${deletingId === p._id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                            disabled={deletingId === p._id}
+                                            onClick={() => deletePatient(p)}
+                                        >
+                                            {deletingId === p._id ? 'Deleting...' : 'Delete Account'}
+                                        </button>
                                     </div>
                                 </td>
                             </tr>

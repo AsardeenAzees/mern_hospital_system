@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { http } from '../../api/http'
 import { Link } from 'react-router-dom'
 
@@ -9,6 +9,19 @@ export default function AdminPatients() {
     const [data, setData] = useState({ patients: [], total: 0, pages: 1 })
     const [loading, setLoading] = useState(false)
     const [err, setErr] = useState('')
+    const [deletingId, setDeletingId] = useState(null)
+
+    const loadList = useCallback(async (pageToUse = page, query = debounced) => {
+        setLoading(true); setErr('')
+        try {
+            const { data } = await http.get('/patients/admin/list', { params: { q: query, page: pageToUse, limit: 10 } })
+            setData(data)
+        } catch (e) {
+            setErr(e.response?.data?.message || 'Failed to load patients')
+        } finally {
+            setLoading(false)
+        }
+    }, [debounced, page])
 
     // debounce search
     useEffect(() => {
@@ -18,18 +31,8 @@ export default function AdminPatients() {
 
     // load list
     useEffect(() => {
-        (async () => {
-            setLoading(true); setErr('')
-            try {
-                const { data } = await http.get('/patients/admin/list', { params: { q: debounced, page, limit: 10 } })
-                setData(data)
-            } catch (e) {
-                setErr(e.response?.data?.message || 'Failed to load patients')
-            } finally {
-                setLoading(false)
-            }
-        })()
-    }, [debounced, page])
+        loadList(page, debounced)
+    }, [debounced, page, loadList])
 
     const canPrev = page > 1
     const canNext = page < (data.pages || 1)
@@ -55,11 +58,27 @@ export default function AdminPatients() {
         try {
             await http.post(`/patients/${id}/rotate-token`)
             alert('QR token rotated successfully. Please download the new QR code.')
-            // Reload the list to show updated token
-            const { data } = await http.get('/patients/admin/list', { params: { q: debounced, page, limit: 10 } })
-            setData(data)
+            await loadList()
         } catch (e) {
             alert(e.response?.data?.message || 'Failed to rotate token')
+        }
+    }
+
+    const deletePatient = async (patient) => {
+        if (!confirm(`Delete patient account for ${patient.firstName} ${patient.lastName}? This will remove their records.`)) return
+        try {
+            setDeletingId(patient._id)
+            await http.delete(`/patients/${patient._id}`)
+            alert('Patient account deleted')
+            if ((data.patients?.length || 0) === 1 && page > 1) {
+                setPage(prev => Math.max(prev - 1, 1))
+            } else {
+                await loadList()
+            }
+        } catch (e) {
+            alert(e.response?.data?.message || 'Failed to delete patient')
+        } finally {
+            setDeletingId(null)
         }
     }
 
@@ -110,6 +129,14 @@ export default function AdminPatients() {
                                             <button className="underline text-blue-600"
                                                 onClick={() => rotateToken(p._id)}>
                                                 Rotate Token
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className={`underline text-red-600 ${deletingId === p._id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                                disabled={deletingId === p._id}
+                                                onClick={() => deletePatient(p)}
+                                            >
+                                                {deletingId === p._id ? 'Deleting...' : 'Delete Account'}
                                             </button>
                                         </td>
                                     </tr>

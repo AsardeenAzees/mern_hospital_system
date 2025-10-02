@@ -8,6 +8,7 @@ import QRCode from 'qrcode';
 const router = Router();
 
 import Record from '../models/Record.js';
+import User from '../models/User.js';
 
 // Create patient (ADMIN/Reception)
 router.post('/patients', requireAuth, allowRoles('ADMIN'), async (req, res) => {
@@ -139,6 +140,31 @@ router.get('/patients/:id', requireAuth, async (req, res) => {
     if (!['ADMIN', 'DOCTOR', 'NURSE', 'PATIENT'].includes(role)) return res.status(403).json({ message: 'Forbidden' });
 
     res.json({ patient: p });
+});
+
+// Delete patient (Admin)
+router.delete('/patients/:id', requireAuth, allowRoles('ADMIN'), async (req, res) => {
+    try {
+        const { id } = req.params;
+        const patient = await Patient.findById(id);
+
+        if (!patient) {
+            return res.status(404).json({ message: 'Patient not found' });
+        }
+
+        await Record.deleteMany({ patientId: patient._id });
+
+        if (patient.userRef) {
+            await User.findByIdAndDelete(patient.userRef);
+        }
+
+        await patient.deleteOne();
+
+        res.json({ message: 'Patient deleted successfully' });
+    } catch (error) {
+        console.error('Patient deletion error:', error);
+        res.status(500).json({ message: 'Failed to delete patient' });
+    }
 });
 
 // Rotate QR token (Admin)
