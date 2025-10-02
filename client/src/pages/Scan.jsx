@@ -64,14 +64,26 @@ export default function Scan() {
     // Webcam lifecycle
     useEffect(() => {
         return () => {
-            if (html5QrcodeRef.current && isScanningRef.current) {
-                try {
-                    html5QrcodeRef.current.stop().catch(() => {})
-                    isScanningRef.current = false
-                } catch {}
+            const scanner = html5QrcodeRef.current
+            if (!scanner) return
+
+            html5QrcodeRef.current = null
+            isScanningRef.current = false
+
+            const clearIfMounted = () => {
+                const container = document.getElementById(camDivId)
+                if (!container) return
+                scanner.clear().catch(() => {})
             }
-            if (html5QrcodeRef.current) {
-                html5QrcodeRef.current.clear()
+
+            try {
+                Promise.resolve(scanner.stop())
+                    .catch(() => {})
+                    .finally(() => {
+                        clearIfMounted()
+                    })
+            } catch {
+                clearIfMounted()
             }
         }
     }, [])
@@ -172,26 +184,27 @@ export default function Scan() {
                             <span className="mr-2">📷</span>
                             Camera Scanner
                         </h2>
-                        <div className="bg-gray-900 rounded-2xl overflow-hidden shadow-lg">
-                            <div id={camDivId} className="w-full h-80 bg-black flex items-center justify-center">
-                                {!camActive && (
-                                    <div className="text-center text-white">
-                                        <button
-                                            onClick={startCamera}
-                                            className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl"
-                                        >
-                                            Scan Patient QR
-                                        </button>
-                                    </div>
-                                )}
-                                {camActive && !camReady && (
-                                    <div className="text-center text-white">
-                                        <div className="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent mx-auto mb-4"></div>
-                                        <p className="text-lg font-medium">Initializing camera...</p>
-                                        <p className="text-sm text-gray-300 mt-2">Please allow camera access</p>
-                                    </div>
-                                )}
-                            </div>
+                        <div className="bg-gray-900 rounded-2xl overflow-hidden shadow-lg relative">
+                            <div id={camDivId} className="w-full h-80 bg-black"></div>
+
+                            {!camActive && (
+                                <div className="absolute inset-0 flex items-center justify-center text-center text-white">
+                                    <button
+                                        onClick={startCamera}
+                                        className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl"
+                                    >
+                                        Scan Patient QR
+                                    </button>
+                                </div>
+                            )}
+
+                            {camActive && !camReady && (
+                                <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white bg-black bg-opacity-40">
+                                    <div className="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent mb-4"></div>
+                                    <p className="text-lg font-medium">Initializing camera...</p>
+                                    <p className="text-sm text-gray-200 mt-2">Please allow camera access</p>
+                                </div>
+                            )}
                         </div>
                         {!camActive && (
                             <p className="text-sm text-gray-600 mt-3 text-center">
